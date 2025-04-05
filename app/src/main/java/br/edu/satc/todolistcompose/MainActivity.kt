@@ -10,12 +10,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.room.Room
+import br.edu.satc.todolistcompose.repositories.AppDatabase
 import br.edu.satc.todolistcompose.ui.screens.HomeScreen
 import br.edu.satc.todolistcompose.ui.theme.ToDoListComposeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Init database.
+        val db = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java, "br.edu.satc.todolistcompose"
+        )
+            .allowMainThreadQueries() // isso habilita o uso do ROOM em Activitys normais
+            .build()
+
+        val taskDao = db.taskDao()
 
         setContent {
             ToDoListComposeTheme {
@@ -24,7 +35,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    HomeScreen()
+                    HomeScreen(taskDao = taskDao)
                 }
             }
         }
